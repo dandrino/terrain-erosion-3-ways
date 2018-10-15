@@ -55,8 +55,7 @@ These all look iteratively more convincing. However, if you look at actual eleva
   <img src="images/real2_grayscale.png" width=40%>
   <img src="images/real2_hillshaded.png" width=40%>
 
-  <br><em> Elevation maps from somewhere in the continental United States (credit to the USGS).
-  <br>The right images uses the same coloration as above, for consistency. </em>
+  <br><em> Elevation maps from somewhere in the continental United States (credit to the USGS). The right images uses the same coloration as above, for consistency. </em>
 </p>
 
 The fractal shapes you see in real life terrain are driven by **erosion**: the set of processes that describe terrain displacement over time. There are several types of erosion, but the one that causes those fractal shapes you see is **hydraulic erosion**, which is the displacement of terrain via water. As water flows across terrain, it takes sediment with it and deposits it downhill. This has the effect of carving out mountains and creating smooth valleys. The fractal pattern emerges from smaller streams merging into larger streams and rivers as they flow downhill.
@@ -66,7 +65,7 @@ Unfortunately, more involved techniques are required to generate terrain with co
 
 ## Simulation
 
-If real life erosion is driven by physical processes, couldn't we just simulate those processes to generate terrain with erosion? Then answer is, "yes"! The mechanics of hydraulic erosion, in particular, are well known and are fairly easily to simulate.
+If real life erosion is driven by physical processes, couldn't we just simulate those processes to generate terrain with erosion? Then answer is, yes! The mechanics of hydraulic erosion, in particular, are well known and are fairly easily to simulate.
 
 The basic idea of hydraulic erosion is that water dissolves terrain into sediment, which is then transported downhill and deposited. Programmatically, this means tracking the following quantities:
 
@@ -93,7 +92,7 @@ Apply this process for long enough and you may get something like this:
 <p align="center">
   <img src="images/simulation_grayscale.png" width=40%>
   <img src="images/simulation_hillshaded.png"" width=40%>
-  <br><em>Terrain from simulated erosion. See <a href="https://youtu.be/RjpqoxCdlJA) for a time lapse.">here</a> for a time lapse.</em>
+  <br><em>Terrain from simulated erosion. See <a href="https://youtu.be/RjpqoxCdlJA">here</a> for a time lapse.</em>
 </p>
 
 What you get is a lot of the features you get real life terrain. Specifically, the the mountains exhibit the tendril-like pattern of ridges and cuts. However, long rivers are not readily apparent. Furthermore, this approach also generates large flat valleys of sediment, which can be a plus or minus depending on your tastes (there's more to generated terrain than mountainscapes, after all).
