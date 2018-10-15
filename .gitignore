@@ -1,0 +1,17 @@
+# Python-related files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Training data files.
+zip_files/
+array_files/
+training_images/
+*.csv
+
+# Generated terrain files.
+*.np[yz]
+
+# Misc files.
+.DS_Store
+*.swp
