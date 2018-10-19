@@ -2,7 +2,7 @@
 
 ## Background
 
-Terrain generation has long been a populate topic in the procedural generation community, with applications in video games and movies. Some games use procedural terrain to generate novel environments on the fly for the player to explore. Others use procedural terrain as a tool for artists to use when crafting a believable world. 
+Terrain generation has long been a popular topic in the procedural generation community, with applications in video games and movies. Some games use procedural terrain to generate novel environments on the fly for the player to explore. Others use procedural terrain as a tool for artists to use when crafting a believable world. 
 
 The most common way of representing array is a 2D grid of height values. This type of terrain doesn't allow for overhangs and caves, but at large scales those features are not very apparent. The most popular terrain generation algorithms focus on adding together different layers of [coherent noise](http://libnoise.sourceforge.net/coherentnoise/index.html), which can be thought of as smoothed random noise. Several popular choices for coherent noise are:
 
@@ -60,7 +60,7 @@ These all look iteratively more convincing. However, if you look at actual eleva
 
 The fractal shapes you see in real life terrain are driven by **erosion**: the set of processes that describe terrain displacement over time. There are several types of erosion, but the one that causes those fractal shapes you see is **hydraulic erosion**, which is the displacement of terrain via water. As water flows across terrain, it takes sediment with it and deposits it downhill. This has the effect of carving out mountains and creating smooth valleys. The fractal pattern emerges from smaller streams merging into larger streams and rivers as they flow downhill.
 
-Unfortunately, more involved techniques are required to generate terrain with convincing erosion patterns. The following three sections will go over three distinct methods of generating eroded terrain, along with their pros and cons.
+Unfortunately, more involved techniques are required to generate terrain with convincing erosion patterns. The following three sections will go over three distinct methods of generating eroded terrain. Each method has their pros and cons, so take that into consideration if you want to include them in your terrain project.
 
 
 ## Simulation
@@ -75,7 +75,7 @@ The basic idea of hydraulic erosion is that water dissolves terrain into sedimen
 
 When simulating, we make small changes to these quantities repeatedly until the erosion features emerge in our terrain.
 
-To start off, we initiate the water and sediment levels to zero. The initial terrain height is seeded to some prior heigh map, frequently jus regular fBm.
+To start off, we initiate the water and sediment levels to zero. The initial terrain height is seeded to some prior height map, frequently just regular fBm.
 
 Each simulation iteration involves the following steps:
 
@@ -92,7 +92,7 @@ Apply this process for long enough and you may get something like this:
 <p align="center">
   <img src="images/simulation_grayscale.png" width=40%>
   <img src="images/simulation_hillshaded.png"" width=40%>
-  <br><em>Terrain from simulated erosion. See <a href="https://youtu.be/RjpqoxCdlJA">here</a> for a time lapse.</em>
+  <br><em>Terrain from simulated erosion. See <a href="https://drive.google.com/file/d/1bHreLjLN5zEXB62nOv1QZu3mCKe_eIDp/view?usp=sharing">here</a> for a time lapse.</em>
 </p>
 
 What you get is a lot of the features you get real life terrain. Specifically, the the mountains exhibit the tendril-like pattern of ridges and cuts. However, long rivers are not readily apparent. Furthermore, this approach also generates large flat valleys of sediment, which can be a plus or minus depending on your tastes (there's more to generated terrain than mountainscapes, after all).
@@ -137,12 +137,42 @@ In addition, if we assume that terrain features do not have a directional prefer
 
 These training samples are then used to train the GAN. Even using progressively grown GANs, this will still take quite a while to complete (expect around a week even with a beefy Nvidia Tesla GPU).
 
-TODO: training time lapse
+[Here](https://drive.google.com/file/d/1zdlgpkQu2zqWKJr23di73-lc3hJBAfqW/view?usp=sharing) is a timelapse video several terrain samples thoughout the training process.
 
 
 ### Results
 
-TODO: write up
+Once the network is trained, all we need to do is feed it a new random latent vector into the generator to create new terrain samples:
+
+<p align="center">
+  <img src="images/ml_generated_1_grayscale.png" width=40%>
+  <img src="images/ml_generated_1_hillshaded.png" width=40%>
+  <br>
+  <img src="images/ml_generated_2_grayscale.png" width=40%>
+  <img src="images/ml_generated_2_hillshaded.png" width=40%>
+  <br>
+  <img src="images/ml_generated_3_grayscale.png" width=40%>
+  <img src="images/ml_generated_3_hillshaded.png" width=40%>
+  <br>
+  <img src="images/ml_generated_4_grayscale.png" width=40%>
+  <img src="images/ml_generated_4_hillshaded.png" width=40%>
+  <br>
+  
+  
+  <em>ML-generated terrain.</em>
+</p>
+
+
+### Pros
+
+* Generated terrain is basically indistinguishable from real-world elevation data. It captures not just erosion effects, but many other natural phenomena that shape terrain in nature.
+* Generation is fairly efficient. Once you have a trained network, creating new terrain samples is fairly fast.
+
+### Cons
+
+* Training is *very* expensive (both in time and money). Lot of effort is required to acquire, clean, validate, and finally train the network. It took about 8 days to train the network used in the above examples.
+* Very little control over the final product. The quality of generated terrain is basically driven by the training samples. Not only do you need a large number of training samples to generate good terrain, you also need good heuristics to make sure that each training sample is suitable. Because training takes so long, it isn't really practical to iterate on these heuristics to generate good results.
+* Difficult to scale to higher resolutions. GANs are generally good a low resolution images. It gets much more expensive, both in terms of CPU and memory costs, to scale up to higher resolution height maps.
 
 
 ## River Networks
@@ -182,7 +212,7 @@ The next step is to generate the river network. The general approach is to gener
 * Moves uphill. Since we are growing the river graphs upstream, the end effect is only downhill-flowing rivers.
 * Does not reconnect with an existing river graph. This results in rivers that only merge as they flow downhill, but never split.
 
-Furthermore, we also prioritize which edge to add by how much it aligns with the previous edge in the graph. Without this, rivers will twist an turn in ways that don't appear natural. Furthermore, amount of "directional inertia" for each edge can be configured to get more twisty or straight rivers.
+Furthermore, we also prioritize which edge to add by how much it aligns with the previous edge in the graph. Without this, rivers will twist and turn in ways that don't appear natural. Furthermore, amount of "directional inertia" for each edge can be configured to get more twisty or straight rivers.
 
 <p align="center">
   <img src="images/river_network_low_inertia.png" width=40%>
@@ -268,7 +298,7 @@ The next step is to download the actual elevation data. You can either use the `
 
 The next step is to convert the elevation data from IMG files in a ZIP archive to Numpy array files. You can do this by calling `python3 extract_height_arrays.py <downloaded CSV file>`. This will write the Numpy arrays to the `array_files/` directory.
 
-After this, run `python3 generate_training_images.py`, which will go though each array in the `array_files/` directory, and create 512x512 training sample images from it (written to the `training_samples/` directory). This script performs the validation and filtering described above. It also takes a long time to run, so brew a pot of coffee before you kick it off.
+After this, run `python3 generate_training_images.py`, which will go through each array in the `array_files/` directory, and create 512x512 training sample images from it (written to the `training_samples/` directory). This script performs the validation and filtering described above. It also takes a long time to run, so brew a pot of coffee before you kick it off.
 
 The next steps will require that you cloned the `progressive_growing_of_gans` project. First, you need to generate the training data in the `tfrecords` format. This can be done by calling:
 
@@ -287,5 +317,15 @@ Now, you can finally run `python3 train.py`. Even with a good graphics card, thi
 When you're done, the `results/` directory will contain all sorts of training outputs, including progress images, Tensorboard logs, and (most importantly) the PKL files containing the network weights.
 
 #### Generating Terrain Samples
- 
-TBD
+
+To generate samples, run the following script:
+
+```python3 generate_ml_output.py path/to/progressive_growing_of_gans network_weights.pkl 10```
+
+The arguments are:
+
+1. The path to the cloned `progressive_growing_of_gans` repository.
+1. The network weights file (the one used for this demo can be found [here](https://drive.google.com/file/d/1czHFcF2ZG_lki7TAQyYCoqtsVcJmdCUN/view?usp=sharing)).
+1. The number of terrain samples to generate (optional, defaults to 20)
+
+The outputs are written to the `ml_outputs` directory.

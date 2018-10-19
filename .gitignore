@@ -8,8 +8,10 @@ zip_files/
 array_files/
 training_images/
 *.csv
+*.pkl
 
 # Generated terrain files.
+ml_outputs/
 *.np[yz]
 
 # Misc files.
