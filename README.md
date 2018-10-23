@@ -58,7 +58,7 @@ These all look iteratively more convincing. However, if you look at actual eleva
   <br><em> Elevation maps from somewhere in the continental United States (credit to the USGS). The right images uses the same coloration as above, for consistency. </em>
 </p>
 
-The fractal shapes you see in real life terrain are driven by **erosion**: the set of processes that describe terrain displacement over time. There are several types of erosion, but the one that causes those fractal shapes you see is **hydraulic erosion**, which is the displacement of terrain via water. As water flows across terrain, it takes sediment with it and deposits it downhill. This has the effect of carving out mountains and creating smooth valleys. The fractal pattern emerges from smaller streams merging into larger streams and rivers as they flow downhill.
+The fractal shapes you see in real life terrain are driven by **erosion**: the set of processes that describe terrain displacement over time. There are several types of erosion, but the one that most significantly causes those fractal shapes you see is **hydraulic erosion**, which is basically the process of terrain displacement via water. As water flows across terrain, it takes sediment with it and deposits it downhill. This has the effect of carving out mountains and creating smooth valleys. The fractal pattern emerges from smaller streams merging into larger streams and rivers as they flow downhill.
 
 Unfortunately, more involved techniques are required to generate terrain with convincing erosion patterns. The following three sections will go over three distinct methods of generating eroded terrain. Each method has their pros and cons, so take that into consideration if you want to include them in your terrain project.
 
@@ -92,24 +92,24 @@ Apply this process for long enough and you may get something like this:
 <p align="center">
   <img src="images/simulation_grayscale.png" width=40%>
   <img src="images/simulation_hillshaded.png"" width=40%>
-  <br><em>Terrain from simulated erosion. See <a href="https://drive.google.com/file/d/1bHreLjLN5zEXB62nOv1QZu3mCKe_eIDp/view?usp=sharing">here</a> for a time lapse.</em>
+  <br><em>Terrain from simulated erosion. See <a href="https://drive.google.com/file/d/1iz3xl71qOVcPaSMZ95JyfXIU9exDy8TV/view?usp=sharing">here</a> for a time lapse.</em>
 </p>
 
-What you get is a lot of the features you get real life terrain. Specifically, the the mountains exhibit the tendril-like pattern of ridges and cuts. However, long rivers are not readily apparent. Furthermore, this approach also generates large flat valleys of sediment, which can be a plus or minus depending on your tastes (there's more to generated terrain than mountainscapes, after all).
+The results are fairly convincing. The tendril-like shape of ridges and cuts you see in real-life terrain are readily apparent. What also jumps out are the large, flat valleys that are the result of sediment deposition over time. If this simulation were left to continue indefinitely, eventually all mountains would be eroded into these flat sedimentary valleys.
 
-This method of generating terrain can be seen in professional terrain-authoring tools. The code for the terrain above is largely a vectorized implementation of the code found on [this page](http://ranmantaru.com/blog/2011/10/08/water-erosion-on-heightmap-terrain/). For a more theoretical approach, check out this [paper](https://hal.inria.fr/inria-00402079/document).
+Because of results like you see above, this method of generating terrain can be seen in professional terrain-authoring tools. The code for the terrain above is largely a vectorized implementation of the code found on [this page](http://ranmantaru.com/blog/2011/10/08/water-erosion-on-heightmap-terrain/). For a more theoretical approach, check out this [paper](https://hal.inria.fr/inria-00402079/document).
 
 
 ### Pros
 
 * Lot of real-life terrain features simply emerge from running these rules, including stream downcutting, smooth valleys, and differential erosion.
-* Different regions can be parameterized differently to develop different terrain features (e.g. deserts can evolve differently than forests).
-* Fairly easy to parallelize.
+* Instead of using global parameter values, different regions can be parameterized differently to develop distinct terrain features (e.g. deserts can evolve differently than forests).
+* Fairly easy to parallelize given how straightforward vectorization is.
 
 ### Cons
 
 * Parameter hell. There are around 10 constants that need to be set, in addition to other factors like the precipitation pattern and the initial terrain shape. Small changes to any of these can produce completely different results, so it can be difficult to find the ideal combination of parameters that produces good results.
-* Fairly inefficient. Given an NxN grid, in order for changes on one side of the map to affect the opposite size you need O(N) iterations, which puts the overall runtime at O(N<sup>3</sup>). This means that doubling the grid dimension can result in 8x execution time. This performance cost further multiplies the cost of parameter tweaking.
+* Fairly inefficient. Given an NxN grid, in order for changes on one side of the map to affect the opposite size you need O(N) iterations, which puts the overall runtime at O(N<sup>3</sup>). This means that doubling the grid dimension can result in 8x execution time. This performance cost further exacerbates the cost of parameter tweaking.
 * Difficult to utilize to produce novel terrain. The results of simulation all look like reasonable approximations of real life terrain, however extending this to new types of terrain requires an understanding of the physical processes that would give way to that terrain, which can be prohibitively difficult. 
 
 
@@ -137,7 +137,7 @@ In addition, if we assume that terrain features do not have a directional prefer
 
 These training samples are then used to train the GAN. Even using progressively grown GANs, this will still take quite a while to complete (expect around a week even with a beefy Nvidia Tesla GPU).
 
-[Here](https://drive.google.com/file/d/1zdlgpkQu2zqWKJr23di73-lc3hJBAfqW/view?usp=sharing) is a timelapse video several terrain samples thoughout the training process.
+[Here](https://drive.google.com/file/d/1zdlgpkQu2zqWKJr23di73-lc3hJBAfqW/view?usp=sharing) is a timelapse video several terrain samples throughout the training process.
 
 
 ### Results

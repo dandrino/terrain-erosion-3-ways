@@ -17,21 +17,10 @@ import util
 # Smooths out slopes of `terrain` that are too steep. Rough approximation of the
 # phenomenon described here: https://en.wikipedia.org/wiki/Angle_of_repose
 def apply_slippage(terrain, repose_slope, cell_width):
-  # A simple cross-shaped kernel.
-  kernel = np.zeros_like(terrain)
-  kernel[0][0] = 1.0
-  kernel[1][0] = 1.0
-  kernel[-1][0] = 1.0
-  kernel[0][1] = 1.0
-  kernel[0][-1] = 1.0
-  kernel /= kernel.sum()
-
-  delta = util.gaussian_gradient(terrain, sigma=0.5) / cell_width
-  smoothed = np.fft.ifft2(np.fft.fft2(terrain) * np.fft.fft2(kernel)).real
-
+  delta = util.simple_gradient(terrain) / cell_width
+  smoothed = util.gaussian_blur(terrain, sigma=1.5)
   should_smooth = np.abs(delta) > repose_slope
   result = np.select([np.abs(delta) > repose_slope], [smoothed], terrain)
-
   return result
 
 
@@ -64,13 +53,13 @@ def main(argv):
   gradient_sigma = 0.5
 
   # Sediment constants
-  sediment_capacity_constant = 10.0
-  deposition_rate = 0.005
-  dissolving_rate = 0.35
+  sediment_capacity_constant = 50.0
+  dissolving_rate = 0.25
+  deposition_rate = 0.001
 
   # The numer of iterations is proportional to the grid dimension. This is to 
   # allow changes on one side of the grid to affect the other side.
-  iterations = int(2.5 * dim)
+  iterations = int(1.4 * dim)
 
   # `terrain` represents the actual terrain height we're interested in
   terrain = util.fbm(shape, -2.0)
@@ -95,10 +84,10 @@ def main(argv):
     # Compute the normalized gradient of the terrain height to determine where 
     # water and sediment will be moving.
     gradient = np.zeros_like(terrain, dtype='complex')
-    gradient = util.gaussian_gradient(terrain, sigma=gradient_sigma)
+    gradient = util.simple_gradient(terrain)
     gradient = np.select([np.abs(gradient) < 1e-10],
-                         [np.exp(2j * np.pi * np.random.rand(*shape))],
-                         gradient)
+                             [np.exp(2j * np.pi * np.random.rand(*shape))],
+                             gradient)
     gradient /= np.abs(gradient)
 
     # Compute the difference between teh current height the height offset by

@@ -66,8 +66,8 @@ def displace(a, delta):
   }
   result = np.zeros_like(a)
   for dx in range(-1, 2):
+    wx = np.maximum(fns[dx](delta.real), 0.0)
     for dy in range(-1, 2):
-      wx = np.maximum(fns[dx](delta.real), 0.0)
       wy = np.maximum(fns[dy](delta.imag), 0.0)
       result += np.roll(np.roll(wx * wy * a, dy, axis=0), dx, axis=1)
 
@@ -84,6 +84,14 @@ def gaussian_gradient(a, sigma=1.0):
   fa = np.fft.fft2(a)
   dy = np.fft.ifft2(np.fft.fft2(dg(fy) * g(fx)) * fa).real
   dx = np.fft.ifft2(np.fft.fft2(g(fy) * dg(fx)) * fa).real
+  return 1j * dx + dy
+
+
+# Simple gradient by taking the diff of each cell's horizontal and vertical
+# neighbors.
+def simple_gradient(a):
+  dx = 0.5 * (np.roll(a, 1, axis=0) - np.roll(a, -1, axis=0))
+  dy = 0.5 * (np.roll(a, 1, axis=1) - np.roll(a, -1, axis=1))
   return 1j * dx + dy
 
 
@@ -214,11 +222,10 @@ def worley(shape, spacing):
 
 # Peforms a gaussian blur of `a`.
 def gaussian_blur(a, sigma=1.0):
-  [fy, fx] = np.meshgrid(*(np.fft.fftfreq(n, 1.0 / n) for n in a.shape))
-  fr = np.hypot(fx, fy)
+  freqs = tuple(np.fft.fftfreq(n, d=1.0 / n) for n in a.shape)
+  freq_radial = np.hypot(*np.meshgrid(*freqs))
   sigma2 = sigma**2
   g = lambda x: ((2 * np.pi * sigma2) ** -0.5) * np.exp(-0.5 * (x / sigma)**2)
-
-  return np.fft.ifft2(np.fft.fft2(a) * np.fft.fft2(g(fr))).real
-
-
+  kernel = g(freq_radial)
+  kernel /= kernel.sum()
+  return np.fft.ifft2(np.fft.fft2(a) * np.fft.fft2(kernel)).real
