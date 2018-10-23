@@ -8,7 +8,6 @@ import util
 
 
 def main(argv):
-  dim = 512
   shape = (512,) * 2
 
   values = util.fbm(shape, -2, lower=2.0)

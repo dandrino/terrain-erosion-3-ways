@@ -10,7 +10,6 @@ def noise_octave(shape, f):
   return util.fbm(shape, -1, lower=f, upper=(2 * f))
 
 def main(argv):
-  dim = 512
   shape = (512,) * 2
 
   values = np.zeros(shape)
