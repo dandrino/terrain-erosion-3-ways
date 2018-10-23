@@ -172,7 +172,7 @@ Once the network is trained, all we need to do is feed it a new random latent ve
 
 * Training is *very* expensive (both in time and money). Lot of effort is required to acquire, clean, validate, and finally train the network. It took about 8 days to train the network used in the above examples.
 * Very little control over the final product. The quality of generated terrain is basically driven by the training samples. Not only do you need a large number of training samples to generate good terrain, you also need good heuristics to make sure that each training sample is suitable. Because training takes so long, it isn't really practical to iterate on these heuristics to generate good results.
-* Difficult to scale to higher resolutions. GANs are generally good a low resolution images. It gets much more expensive, both in terms of CPU and memory costs, to scale up to higher resolution height maps.
+* Difficult to scale to higher resolutions. GANs are generally good a low resolution images. It gets much more expensive, both in terms of compute and memory costs, to scale up to higher resolution height maps.
 
 
 ## River Networks
