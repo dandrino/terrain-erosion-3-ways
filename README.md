@@ -131,7 +131,7 @@ From these height maps I will take 512x512 samples for use in training. In the s
 
 * Only accept samples who minimum and maximum elevation span a certain threshold. This approach prefers samples that are more "mountainous", and will therefore produce more noticeable erosion effects.
 * Ignore samples if a certain percentage of grid points are within a certain margin of the sample's minimum elevation. This filters out samples that are largely flat, or ones that consist mostly of water.
-* Ignore samples whose [Shannon entropy](https://en.wikipedia.org/wiki/Entropy_(information_theory\)) is below a certain threshold. This helps filter out samples that have been corrupted (perhaps due to different libraries used to encode and decode the height data).
+* Ignore samples whose [Shannon entropy](https://en.wikipedia.org/wiki/Entropy_(information_theory)) is below a certain threshold. This helps filter out samples that have been corrupted (perhaps due to different libraries used to encode and decode the height data).
 
 In addition, if we assume that terrain features do not have a directional preference, we can rotate each sample by 90° increments as well as flipping it to increase the dataset size by 8x. In the end, this nets us around 180,000 training samples.
 
