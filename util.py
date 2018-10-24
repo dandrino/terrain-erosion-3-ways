@@ -213,11 +213,11 @@ def dist_to_mask(mask):
 
 # Generates worley noise with points separated by `spacing`.
 def worley(shape, spacing):
-  points = util.poisson_disc_sampling(shape, spacing)
+  points = poisson_disc_sampling(shape, spacing)
   coords = np.floor(points).astype(int)
   mask = np.zeros(shape, dtype=bool)
   mask[coords[:, 0], coords[:, 1]] = True
-  return util.normalize(util.dist_to_mask(mask))
+  return normalize(dist_to_mask(mask))
 
 
 # Peforms a gaussian blur of `a`.
