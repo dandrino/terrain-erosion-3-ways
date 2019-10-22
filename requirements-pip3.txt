@@ -13,4 +13,4 @@ tensorboard==1.11.0
 tensorflow==1.12.2
 tensorflow-gpu==1.11.0
 tensorflow-tensorboard==1.5.1
-urllib3==1.19.1
+urllib3==1.24.2
