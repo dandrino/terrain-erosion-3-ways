@@ -10,7 +10,7 @@ scipy==1.1.0
 six==1.11.0
 # You will also have to install CUDA and cuDNN drivers for tensorflow to work.
 tensorboard==1.11.0
-tensorflow==1.15.2
+tensorflow==2.3.1
 tensorflow-gpu==1.11.0
 tensorflow-tensorboard==1.5.1
 urllib3==1.25.6
