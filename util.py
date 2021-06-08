@@ -10,6 +10,16 @@ import scipy as sp
 import scipy.spatial
 
 
+# Read an image into an array
+# (probably fragile and probably only works with 8-bit grayscale)
+# ToDo: Test for robustness with multiple image types/formats
+def image_to_array(image_file):
+  img = Image.open(image_file)
+  data = np.asarray(img)
+  data = np.float64(data) / 255
+  return data
+
+
 # Open CSV file as a dict.
 def read_csv(csv_path):
   with open(csv_path, 'r') as csv_file:
