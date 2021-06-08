@@ -62,7 +62,9 @@ def main(argv):
   iterations = int(1.4 * dim)
 
   # `terrain` represents the actual terrain height we're interested in
-  terrain = util.fbm(shape, -2.0)
+  # ToDo: Check for arguments at runtime and use FBM if no image supplied
+  # terrain = util.fbm(shape, -2.0)
+  terrain = util.image_to_array(argv[1])
 
   # `sediment` is the amount of suspended "dirt" in the water. Terrain will be
   # transfered to/from sediment depending on a number of different factors.
@@ -74,23 +76,34 @@ def main(argv):
   # The water velocity.
   velocity = np.zeros_like(terrain)
 
+  # ToDo: Only run this if snapshot is True AND the source is FBM, not an image
+  if enable_snapshotting:
+    output_path = os.path.join(my_dir, 'sim_FBM.png')
+    util.save_as_png(terrain, output_path)
+
   for i in range(0, iterations):
     print('%d / %d' % (i + 1, iterations))
 
+    # Set a deterministic seed for our random number generator
+    rng = np.random.default_rng(i)
+
     # Add precipitation. This is done by via simple uniform random distribution,
     # although other models use a raindrop model
-    water += np.random.rand(*shape) * rain_rate
+    water += rng.random(shape) * rain_rate
+
+    # Use a different RNG seed for the next step
+    rng = np.random.default_rng(i + 3)
 
     # Compute the normalized gradient of the terrain height to determine where 
     # water and sediment will be moving.
     gradient = np.zeros_like(terrain, dtype='complex')
     gradient = util.simple_gradient(terrain)
     gradient = np.select([np.abs(gradient) < 1e-10],
-                             [np.exp(2j * np.pi * np.random.rand(*shape))],
+                             [np.exp(2j * np.pi * rng.random(shape))],
                              gradient)
     gradient /= np.abs(gradient)
 
-    # Compute the difference between teh current height the height offset by
+    # Compute the difference between the current height the height offset by
     # `gradient`.
     neighbor_height = util.sample(terrain, -gradient)
     height_delta = terrain - neighbor_height
