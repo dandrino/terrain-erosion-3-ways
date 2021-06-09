@@ -11,6 +11,7 @@ training_images/
 *.pkl
 
 # Generated terrain files.
+output/
 ml_outputs/
 sim_snaps/
 *.np[yz]
