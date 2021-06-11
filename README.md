@@ -190,7 +190,7 @@ First we start off with what regions will be land or water. Using some simple fB
   <br><em>Land mask. Black is ocean, and white is land.</em>
 </p>
 
-The next step is to define the nodes on which the river network will be generated. A straightforward approach is to assign a node to each (x, y) coordinate of the image, however this has a tendency to create horizontal and vertical artifacts in the final product. Instead will we create out nodes by sampling some random points across the grid using [Poisson disc sampling](https://www.jasondavies.com/poisson-disc/). After that we use [Delaunay triangulation](https://en.wikipedia.org/wiki/Delaunay_triangulation) to connect the nodes.
+The next step is to define the nodes on which the river network will be generated. A straightforward approach is to assign a node to each (x, y) coordinate of the image, however this has a tendency to create horizontal and vertical artifacts in the final product. Instead will we create our nodes by sampling some random points across the grid using [Poisson disc sampling](https://www.jasondavies.com/poisson-disc/). After that we use [Delaunay triangulation](https://en.wikipedia.org/wiki/Delaunay_triangulation) to connect the nodes.
 
 <p align="center">
   <img src="images/poisson_disc_sampling.png" width=40%>
