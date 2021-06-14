@@ -32,13 +32,22 @@ def normalize(x, bounds=(0, 1)):
 
 
 # Fourier-based power law noise with frequency bounds.
-def fbm(shape, p, lower=-np.inf, upper=np.inf):
+def fbm(shape, p, lower=-np.inf, upper=np.inf, seed=None):
+  # Print seed so users will know how to reproduce the result.
+  if seed is not None:
+    print("fBm seed:", seed)
+  else:
+    seed_rng = np.random.default_rng()
+    seed = seed_rng.integers(low=0, high=999999)
+    print("fBm seed:", seed)
+
+  rng = np.random.default_rng(seed)
   freqs = tuple(np.fft.fftfreq(n, d=1.0 / n) for n in shape)
   freq_radial = np.hypot(*np.meshgrid(*freqs))
   envelope = (np.power(freq_radial, p, where=freq_radial!=0) *
               (freq_radial > lower) * (freq_radial < upper))
   envelope[0][0] = 0.0
-  phase_noise = np.exp(2j * np.pi * np.random.rand(*shape))
+  phase_noise = np.exp(2j * np.pi * rng.random(shape))
   return normalize(np.real(np.fft.ifft2(np.fft.fft2(phase_noise) * envelope)))
 
 
@@ -49,7 +58,6 @@ def sample(a, offset):
   shape = np.array(a.shape)
   delta = np.array((offset.real, offset.imag))
   coords = np.array(np.meshgrid(*map(range, shape))) - delta
-
   lower_coords = np.floor(coords).astype(int)
   upper_coords = lower_coords + 1
   coord_offsets = coords - lower_coords 
