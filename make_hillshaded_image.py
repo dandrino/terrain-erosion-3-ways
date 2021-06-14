@@ -1,18 +1,24 @@
 #!/usr/bin/python3
 
-# Genreates a PNG containing a hillshaded version of the terrain height.
+# Generates a PNG containing a hillshaded version of the terrain height.
 
-import util
+import os
 import sys
+import argparse
+import util
 
 
 def main(argv):
-  if len(argv) != 3:
-    print('Usage: %s <input_array.np[yz]> <output_image.png>' % (argv[0],))
-    sys.exit(-1)
+  parser = argparse.ArgumentParser(description="Generates a PNG containing a hillshaded version of the terrain height.")
+  parser.add_argument("input_array", help="<input_array.np[yz]> (include file extension)")
+  parser.add_argument("output_image", help="<output_image.png> (include file extension)")
+  args = parser.parse_args()
 
-  input_path = argv[1]
-  output_path = argv[2]
+  my_dir = os.path.dirname(argv[0])
+  output_dir = os.path.join(my_dir, 'output')
+  
+  input_path = args.input_array
+  output_path = os.path.join(output_dir, args.output_image)
 
   height, land_mask = util.load_from_file(input_path)
   util.save_as_png(util.hillshaded(height, land_mask=land_mask), output_path)
