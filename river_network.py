@@ -9,7 +9,9 @@ import matplotlib.pyplot as plt
 import scipy as sp
 import scipy.spatial
 import skimage.measure
+import os
 import sys
+import argparse
 import util
 
 
@@ -173,6 +175,18 @@ def remove_lakes(mask):
 
 
 def main(argv):
+  parser = argparse.ArgumentParser(description="Generate terrain from a river network.")
+  parser.add_argument("-o", "--output", help="Output file name (without file extension). If not specified then the default file name will be used.")
+  parser.add_argument("--png", action="store_true", help="Automatically save a png of the terrain.")
+  args = parser.parse_args()
+
+  my_dir = os.path.dirname(argv[0])
+  output_dir = os.path.join(my_dir, 'output')
+  if args.output:
+    output_path = os.path.join(output_dir, args.output)
+  else:
+    output_path = os.path.join(output_dir, 'river_network')
+
   dim = 512
   shape = (dim,) * 2
   disc_radius = 1.0
@@ -198,7 +212,6 @@ def main(argv):
   points = util.poisson_disc_sampling(shape, disc_radius)
   coords = np.floor(points).astype(int)
 
-
   print('  ...delaunay triangulation')
   tri = sp.spatial.Delaunay(points)
   (indices, indptr) = tri.vertex_neighbor_vertices
@@ -219,8 +232,13 @@ def main(argv):
       points, neighbors, points_deltas, volume, upstream, 
       max_delta, river_downcutting_constant)
   terrain_height = render_triangulation(shape, tri, new_height)
+  
+  np.savez(output_path, height=terrain_height, land_mask=land_mask)
 
-  np.savez('river_network', height=terrain_height, land_mask=land_mask)
+  # Optionally save out an image as well.
+  if args.png:
+    util.save_as_png(terrain_height, output_path + '_gray.png')
+    util.save_as_png(util.hillshaded(terrain_height, land_mask=land_mask), output_path + '_hill.png')
 
 
 if __name__ == '__main__':
