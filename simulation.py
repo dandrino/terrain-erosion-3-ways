@@ -11,6 +11,7 @@ import scipy as sp
 import matplotlib.pyplot as plt
 import os
 import sys
+import argparse
 import util
 
 
@@ -25,20 +26,53 @@ def apply_slippage(terrain, repose_slope, cell_width):
 
 
 def main(argv):
-  # Grid dimension constants
+  parser = argparse.ArgumentParser(description="Run a terrain erosion simulation.")
+  group = parser.add_mutually_exclusive_group()
+  group.add_argument("-f", "--file", help="Run simulation using a grayscale input image file instead of generating a new fBm noise. (Only works with a square image.) If not specified then noise will be generated.")
+  group.add_argument("-s", "--seed", type=int, help="Noise generator seed. If not specified then a random seed will be used. SEED MUST BE AN INTEGER.")
+  parser.add_argument("-o", "--output", help="Output simulation file name (without file extension). If not specified then the default file name will be used.")
+  parser.add_argument("--snapshot", action="store_true", help="Save a numbered image of every iteration.")
+  parser.add_argument("--png", action="store_true", help="Automatically save a png of the simulation.")
+  args = parser.parse_args()
+
+  my_dir = os.path.dirname(argv[0])
+  output_dir = os.path.join(my_dir, 'output')
+  try: os.mkdir(output_dir)
+  except: pass
+
+  if args.output:
+    output_path = os.path.join(output_dir, args.output)
+  else:
+    output_path = os.path.join(output_dir, 'simulation')
+
+  if args.seed:
+    input_seed = args.seed
+  else:
+    input_seed = None
+
+  # Grid dimension constants if using fBm noise
   full_width = 200
   dim = 512
   shape = [dim] * 2
   cell_width = full_width / dim
   cell_area = cell_width ** 2
 
+  # `terrain` represents the actual terrain height we're interested in
+  if not args.file:
+    terrain = util.fbm(shape, -2.0, seed=input_seed)
+  else:
+    terrain = util.image_to_array(args.file)
+
+    dim = terrain.shape[0]
+    shape = terrain.shape
+    cell_width = full_width / dim
+    cell_area = cell_width ** 2
+
   # Snapshotting parameters. Only needed for generating the simulation
   # timelapse.
-  enable_snapshotting = False
-  my_dir = os.path.dirname(argv[0])
-  snapshot_dir = os.path.join(my_dir, 'sim_snaps')
-  snapshot_file_template = 'sim-%05d.png'
-  if enable_snapshotting:
+  if args.snapshot:
+    snapshot_dir = os.path.join(output_dir, 'sim_snaps')
+    snapshot_file_template = 'sim-%05d.png'
     try: os.mkdir(snapshot_dir)
     except: pass
 
@@ -61,11 +95,6 @@ def main(argv):
   # allow changes on one side of the grid to affect the other side.
   iterations = int(1.4 * dim)
 
-  # `terrain` represents the actual terrain height we're interested in
-  # ToDo: Check for arguments at runtime and use FBM if no image supplied
-  # terrain = util.fbm(shape, -2.0)
-  terrain = util.image_to_array(argv[1])
-
   # `sediment` is the amount of suspended "dirt" in the water. Terrain will be
   # transfered to/from sediment depending on a number of different factors.
   sediment = np.zeros_like(terrain)
@@ -76,18 +105,18 @@ def main(argv):
   # The water velocity.
   velocity = np.zeros_like(terrain)
 
-  # ToDo: Only run this if snapshot is True AND the source is FBM, not an image
-  if enable_snapshotting:
-    output_path = os.path.join(my_dir, 'sim_FBM.png')
-    util.save_as_png(terrain, output_path)
+  # Optionally save the unmodified starting noise if we're not using file input.
+  if args.snapshot and args.png and not args.file:
+    fbm_path = output_path + '_fbm.png'
+    util.save_as_png(terrain, fbm_path)
 
   for i in range(0, iterations):
-    print('%d / %d' % (i + 1, iterations))
+    print('Iteration: %d / %d' % (i + 1, iterations))
 
     # Set a deterministic seed for our random number generator
     rng = np.random.default_rng(i)
 
-    # Add precipitation. This is done by via simple uniform random distribution,
+    # Add precipitation. This is done via simple uniform random distribution,
     # although other models use a raindrop model
     water += rng.random(shape) * rain_rate
 
@@ -144,12 +173,18 @@ def main(argv):
     water *= 1 - evaporation_rate
 
     # Snapshot, if applicable.
-    if enable_snapshotting:
-      output_path = os.path.join(snapshot_dir, snapshot_file_template % i)
-      util.save_as_png(terrain, output_path)
+    if args.snapshot:
+      snapshot_path = os.path.join(snapshot_dir, snapshot_file_template % i)
+      util.save_as_png(terrain, snapshot_path)
 
+  # Normalize terrain values before saving.
+  result = util.normalize(terrain)
 
-  np.save('simulation', util.normalize(terrain))
+  np.save(output_path, result)
+  # Optionally save out an image as well.
+  if args.png:
+    util.save_as_png(result, output_path + '_gray.png')
+    util.save_as_png(util.hillshaded(result), output_path + '_hill.png')
 
   
 if __name__ == '__main__':
