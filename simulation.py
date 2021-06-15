@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-# Semi-phisically-based hydraulic erosion simulation. Code is inspired by the 
+# Semi-phisically-based hydraulic erosion simulation. Code is inspired by the
 # code found here:
 #   http://ranmantaru.com/blog/2011/10/08/water-erosion-on-heightmap-terrain/
 # With some theoretical inspiration from here:
@@ -26,13 +26,23 @@ def apply_slippage(terrain, repose_slope, cell_width):
 
 
 def main(argv):
-  parser = argparse.ArgumentParser(description="Run a terrain erosion simulation.")
+  parser = argparse.ArgumentParser(
+    description="Run a terrain erosion simulation.")
   group = parser.add_mutually_exclusive_group()
-  group.add_argument("-f", "--file", help="Run simulation using an input image file instead of generating a new fBm noise. (Only works with a square image.) If not specified then noise will be generated.")
-  group.add_argument("-s", "--seed", type=int, help="Noise generator seed. If not specified then a random seed will be used. SEED MUST BE AN INTEGER.")
-  parser.add_argument("-o", "--output", help="Output simulation file name (without file extension). If not specified then the default file name will be used.")
-  parser.add_argument("--snapshot", action="store_true", help="Save a numbered image of every iteration.")
-  parser.add_argument("--png", action="store_true", help="Automatically save a png of the simulation.")
+  group.add_argument("-f", "--file", 
+    help="Run simulation using an input image file instead of generating a \
+    new fBm noise. (Only works with a square image.) If not specified then \
+    noise will be generated.")
+  group.add_argument("-s", "--seed", type=int, 
+    help="Noise generator seed. If not specified then a random seed will be \
+    used. SEED MUST BE AN INTEGER.")
+  parser.add_argument("-o", "--output", 
+    help="Output simulation file name (without file extension). If not \
+    specified then the default file name will be used.")
+  parser.add_argument("--snapshot", action="store_true", 
+    help="Save a numbered image of every iteration.")
+  parser.add_argument("--png", action="store_true", 
+    help="Automatically save a png of the simulation.")
   args = parser.parse_args()
 
   my_dir = os.path.dirname(argv[0])
@@ -91,7 +101,7 @@ def main(argv):
   dissolving_rate = 0.25
   deposition_rate = 0.001
 
-  # The numer of iterations is proportional to the grid dimension. This is to 
+  # The numer of iterations is proportional to the grid dimension. This is to
   # allow changes on one side of the grid to affect the other side.
   iterations = int(1.4 * dim)
 
@@ -123,7 +133,7 @@ def main(argv):
     # Use a different RNG seed for the next step
     rng = np.random.default_rng(i + 3)
 
-    # Compute the normalized gradient of the terrain height to determine where 
+    # Compute the normalized gradient of the terrain height to determine where
     # water and sediment will be moving.
     gradient = np.zeros_like(terrain, dtype='complex')
     gradient = util.simple_gradient(terrain)
