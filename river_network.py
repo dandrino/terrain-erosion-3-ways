@@ -80,7 +80,7 @@ def compute_final_height(points, neighbors, deltas, volume, upstream,
 #       each river edge.
 #  
 #  Returns a 3-tuple of:
-#  * List of indices of all points upstream from each point 
+#  * List of indices of all points upstream from each point
 #  * List containing the index of the point downstream of each point.
 #  * The water volume of each point.
 def compute_river_network(points, neighbors, heights, land,
@@ -119,7 +119,7 @@ def compute_river_network(points, neighbors, heights, land,
 
     # Go through each neighbor of upstream point j.
     for k in neighbors[j]:
-      # Ignore neighbors that are lower than the current point, or who already 
+      # Ignore neighbors that are lower than the current point, or who already
       # have an assigned downstream point.
       if (heights[k] < heights[j] or downstream[k] is not None
           or not land[k]):
@@ -175,9 +175,13 @@ def remove_lakes(mask):
 
 
 def main(argv):
-  parser = argparse.ArgumentParser(description="Generate terrain from a river network.")
-  parser.add_argument("-o", "--output", help="Output file name (without file extension). If not specified then the default file name will be used.")
-  parser.add_argument("--png", action="store_true", help="Automatically save a png of the terrain.")
+  parser = argparse.ArgumentParser(
+    description="Generate terrain from a river network.")
+  parser.add_argument("-o", "--output", 
+    help="Output file name (without file extension). If not specified then \
+    the default file name will be used.")
+  parser.add_argument("--png", action="store_true", 
+    help="Automatically save a png of the terrain.")
   args = parser.parse_args()
 
   my_dir = os.path.dirname(argv[0])
@@ -238,7 +242,8 @@ def main(argv):
   # Optionally save out an image as well.
   if args.png:
     util.save_as_png(terrain_height, output_path + '_gray.png')
-    util.save_as_png(util.hillshaded(terrain_height, land_mask=land_mask), output_path + '_hill.png')
+    util.save_as_png(util.hillshaded(
+      terrain_height, land_mask=land_mask), output_path + '_hill.png')
 
 
 if __name__ == '__main__':
