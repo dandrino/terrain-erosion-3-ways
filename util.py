@@ -101,11 +101,10 @@ def displace(a, delta):
     for dy in range(-1, 2):
       wy = np.maximum(fns[dy](delta.imag), 0.0)
       result += np.roll(np.roll(wx * wy * a, dy, axis=0), dx, axis=1)
-
   return result
 
 
-# Returns the gradient of the gaussian blur of `a` encoded as a complex number. 
+# Returns the gradient of the gaussian blur of `a` encoded as a complex number.
 def gaussian_gradient(a, sigma=1.0):
   [fy, fx] = np.meshgrid(*(np.fft.fftfreq(n, 1.0 / n) for n in a.shape))
   sigma2 = sigma**2
@@ -126,7 +125,7 @@ def simple_gradient(a):
   return 1j * dx + dy
 
 
-# Loads the terrain height array (and optionally the land mask from the given 
+# Loads the terrain height array (and optionally the land mask from the given
 # file.
 def load_from_file(path):
   result = np.load(path)
