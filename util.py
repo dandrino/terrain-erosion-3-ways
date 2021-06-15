@@ -8,15 +8,28 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sp
 import scipy.spatial
+import sys
 
 
 # Read an image into an array
-# (probably fragile and probably only works with 8-bit grayscale)
-# ToDo: Test for robustness with multiple image types/formats
 def image_to_array(image_file):
   img = Image.open(image_file)
-  data = np.asarray(img)
-  data = np.float64(data) / 255
+
+  # 8-bit pixels, grayscale (8-bit image)
+  if img.mode == "L":
+    data = np.asarray(img)
+    data = np.float64(data) / 256
+  # 32-bit signed integer pixels, grayscale (16-bit image)
+  elif img.mode == "I":
+    data = np.asarray(img) / 65536
+  # 3x8-bit or 4x8-bit pixels or higher, true color (24-bit or higher image)
+  elif img.mode in ("RGB", "RGBA"):
+    converted = img.convert("L")
+    data = np.asarray(converted)
+    data = np.float64(data) / 256
+  else:
+    print("ERROR. Unsupported image format.")
+    sys.exit(-1)
   return data
 
 
