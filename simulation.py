@@ -28,7 +28,7 @@ def apply_slippage(terrain, repose_slope, cell_width):
 def main(argv):
   parser = argparse.ArgumentParser(description="Run a terrain erosion simulation.")
   group = parser.add_mutually_exclusive_group()
-  group.add_argument("-f", "--file", help="Run simulation using a grayscale input image file instead of generating a new fBm noise. (Only works with a square image.) If not specified then noise will be generated.")
+  group.add_argument("-f", "--file", help="Run simulation using an input image file instead of generating a new fBm noise. (Only works with a square image.) If not specified then noise will be generated.")
   group.add_argument("-s", "--seed", type=int, help="Noise generator seed. If not specified then a random seed will be used. SEED MUST BE AN INTEGER.")
   parser.add_argument("-o", "--output", help="Output simulation file name (without file extension). If not specified then the default file name will be used.")
   parser.add_argument("--snapshot", action="store_true", help="Save a numbered image of every iteration.")
