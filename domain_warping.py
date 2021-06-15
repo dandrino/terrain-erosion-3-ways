@@ -10,9 +10,12 @@ import util
 
 
 def main(argv):
-  parser = argparse.ArgumentParser(description="Generate domain-warped fBm noise.")
-  parser.add_argument("-o", "--output", help="Output file name (without file extension). If not specified then the default file name will be used.")
-  parser.add_argument("--png", action="store_true", help="Automatically save a png of the noise.")
+  parser = argparse.ArgumentParser(
+    description="Generate domain-warped fBm noise.")
+  parser.add_argument("-o", "--output", help="Output file name (without file \
+    extension). If not specified then the default file name will be used.")
+  parser.add_argument("--png", action="store_true", help="Automatically save \
+    a png of the noise.")
   args = parser.parse_args()
 
   my_dir = os.path.dirname(argv[0])
