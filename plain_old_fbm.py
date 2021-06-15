@@ -10,10 +10,16 @@ import util
 
 
 def main(argv):
-  parser = argparse.ArgumentParser(description="Generate fractional Brownian motion (fBm) noise.")
-  parser.add_argument("-s", "--seed", type=int, help="Noise generator seed. If not specified then a random seed will be used. SEED MUST BE AN INTEGER.")
-  parser.add_argument("-o", "--output", help="Output noise file name (without file extension). If not specified then the default file name will be used.")
-  parser.add_argument("--png", action="store_true", help="Automatically save a png of the noise.")
+  parser = argparse.ArgumentParser(
+    description="Generate fractional Brownian motion (fBm) noise.")
+  parser.add_argument("-s", "--seed", type=int, 
+    help="Noise generator seed. If not specified then a random seed will be \
+    used. SEED MUST BE AN INTEGER.")
+  parser.add_argument("-o", "--output", 
+    help="Output noise file name (without file extension). If not specified \
+    then the default file name will be used.")
+  parser.add_argument("--png", action="store_true", 
+    help="Automatically save a png of the noise.")
   args = parser.parse_args()
 
   my_dir = os.path.dirname(argv[0])
