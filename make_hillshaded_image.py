@@ -9,9 +9,13 @@ import util
 
 
 def main(argv):
-  parser = argparse.ArgumentParser(description="Generates a PNG containing a hillshaded version of the terrain height.")
-  parser.add_argument("input_array", help="<input_array.np[yz]> (include file extension)")
-  parser.add_argument("output_image", help="<output_image.png> (include file extension)")
+  parser = argparse.ArgumentParser(
+    description="Generates a PNG containing a hillshaded version of the \
+    terrain height.")
+  parser.add_argument("input_array", 
+    help="<input_array.np[yz]> (include file extension)")
+  parser.add_argument("output_image", 
+    help="<output_image.png> (include file extension)")
   args = parser.parse_args()
 
   my_dir = os.path.dirname(argv[0])
