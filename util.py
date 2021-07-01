@@ -8,6 +8,29 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sp
 import scipy.spatial
+import sys
+
+
+# Read an image into an array
+def image_to_array(image_file):
+  img = Image.open(image_file)
+
+  # 8-bit pixels, grayscale (8-bit image)
+  if img.mode == "L":
+    data = np.asarray(img)
+    data = np.float64(data) / 256
+  # 32-bit signed integer pixels, grayscale (16-bit image)
+  elif img.mode == "I":
+    data = np.asarray(img) / 65536
+  # 3x8-bit or 4x8-bit pixels or higher, true color (24-bit or higher image)
+  elif img.mode in ("RGB", "RGBA"):
+    converted = img.convert("L")
+    data = np.asarray(converted)
+    data = np.float64(data) / 256
+  else:
+    print("ERROR. Unsupported image format.")
+    sys.exit(-1)
+  return data
 
 
 # Open CSV file as a dict.
@@ -22,13 +45,22 @@ def normalize(x, bounds=(0, 1)):
 
 
 # Fourier-based power law noise with frequency bounds.
-def fbm(shape, p, lower=-np.inf, upper=np.inf):
+def fbm(shape, p, lower=-np.inf, upper=np.inf, seed=None):
+  # Print seed so users will know how to reproduce the result.
+  if seed is not None:
+    print("fBm seed:", seed)
+  else:
+    seed_rng = np.random.default_rng()
+    seed = seed_rng.integers(low=0, high=999999)
+    print("fBm seed:", seed)
+
+  rng = np.random.default_rng(seed)
   freqs = tuple(np.fft.fftfreq(n, d=1.0 / n) for n in shape)
   freq_radial = np.hypot(*np.meshgrid(*freqs))
   envelope = (np.power(freq_radial, p, where=freq_radial!=0) *
               (freq_radial > lower) * (freq_radial < upper))
   envelope[0][0] = 0.0
-  phase_noise = np.exp(2j * np.pi * np.random.rand(*shape))
+  phase_noise = np.exp(2j * np.pi * rng.random(shape))
   return normalize(np.real(np.fft.ifft2(np.fft.fft2(phase_noise) * envelope)))
 
 
@@ -39,7 +71,6 @@ def sample(a, offset):
   shape = np.array(a.shape)
   delta = np.array((offset.real, offset.imag))
   coords = np.array(np.meshgrid(*map(range, shape))) - delta
-
   lower_coords = np.floor(coords).astype(int)
   upper_coords = lower_coords + 1
   coord_offsets = coords - lower_coords 
@@ -70,11 +101,10 @@ def displace(a, delta):
     for dy in range(-1, 2):
       wy = np.maximum(fns[dy](delta.imag), 0.0)
       result += np.roll(np.roll(wx * wy * a, dy, axis=0), dx, axis=1)
-
   return result
 
 
-# Returns the gradient of the gaussian blur of `a` encoded as a complex number. 
+# Returns the gradient of the gaussian blur of `a` encoded as a complex number.
 def gaussian_gradient(a, sigma=1.0):
   [fy, fx] = np.meshgrid(*(np.fft.fftfreq(n, 1.0 / n) for n in a.shape))
   sigma2 = sigma**2
@@ -95,7 +125,7 @@ def simple_gradient(a):
   return 1j * dx + dy
 
 
-# Loads the terrain height array (and optionally the land mask from the given 
+# Loads the terrain height array (and optionally the land mask from the given
 # file.
 def load_from_file(path):
   result = np.load(path)
