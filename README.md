@@ -115,7 +115,7 @@ Because of results like you see above, this method of generating terrain can be 
 
 ## Machine Learning
 
-Machine learning is frequently uses as a panacea for all sorts of problems, and terrain generation is no exception. Machine learning can be effective so long as you have lots of compute power and a large, diverse dataset. Fortunately, compute power is easy to acquire, and lots of terrain elevation data is readily available to download.
+Machine learning is frequently used as a panacea for all sorts of problems, and terrain generation is no exception. Machine learning can be effective so long as you have lots of compute power and a large, diverse dataset. Fortunately, compute power is easy to acquire, and lots of terrain elevation data is readily available to download.
  
 The most suitable machine learning approach is to use a **Generative Adversarial Network (GAN)**. GANs are able to produce fairly convincing novel instances of a distribution described by training data. It works via two neural networks: one that produces new instances of the distribution (called the "generator"), and another whose job is to determine whether a provided terrain sample is real (i.e. from the training set), or fake (i.e. via the generator). For some more technical background, check out [these Stanford lectures](https://www.youtube.com/playlist?list=PL3FW7Lu3i5JvHM8ljYj-zLfQRF3EO8sYv).
 
