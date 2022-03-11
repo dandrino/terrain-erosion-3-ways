@@ -4,7 +4,7 @@ GDAL==2.3.2
 matplotlib==3.0.0
 numpy==1.15.2
 opencv-python==3.4.3.18
-Pillow==8.2.0
+Pillow==9.0.1
 scikit-image==0.14.1
 scipy==1.1.0
 six==1.11.0
