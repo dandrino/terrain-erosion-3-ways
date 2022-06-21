@@ -2,7 +2,7 @@
 # See https://trac.osgeo.org/gdal/wiki/DownloadSource
 GDAL==2.3.2
 matplotlib==3.0.0
-numpy==1.15.2
+numpy==1.22.0
 opencv-python==3.4.3.18
 Pillow==8.2.0
 scikit-image==0.14.1
